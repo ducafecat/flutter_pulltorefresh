@@ -257,7 +257,7 @@ abstract class RefreshIndicatorState<T extends RefreshIndicator>
           the _onOffsetChange didn't callback,it will keep failed or success state.
           2. As FrontStyle,when user dragging in 0~100 in refreshing state,it should be reset after the state change
           */
-        WidgetsBinding.instance!.addPostFrameCallback((_) {
+        _ambiguate(WidgetsBinding.instance)!.addPostFrameCallback((_) {
           if (!mounted) {
             return;
           }
@@ -287,7 +287,7 @@ abstract class RefreshIndicatorState<T extends RefreshIndicator>
     } else if (mode == RefreshStatus.twoLevelOpening) {
       floating = true;
       refresherState!.setCanDrag(false);
-      WidgetsBinding.instance!.addPostFrameCallback((_) {
+      _ambiguate(WidgetsBinding.instance)!.addPostFrameCallback((_) {
         if (!mounted) return;
         activity!.resetActivity();
         _position!
@@ -345,6 +345,14 @@ abstract class RefreshIndicatorState<T extends RefreshIndicator>
             : widget.height,
         refreshStyle: widget.refreshStyle);
   }
+
+  /// This allows a value of type T or T?
+  /// to be treated as a value of type T?.
+  ///
+  /// We use this so that APIs that have become
+  /// non-nullable can still be used with `!` and `?`
+  /// to support older versions of the API as well.
+  T? _ambiguate<T>(T? value) => value;
 }
 
 abstract class LoadIndicatorState<T extends LoadIndicator> extends State<T>
@@ -390,7 +398,7 @@ abstract class LoadIndicatorState<T extends LoadIndicator> extends State<T>
 
       // this line for patch bug temporary:indicator disappears fastly when load more complete
       if (mounted) Scrollable.of(context)!.position.correctBy(0.00001);
-      WidgetsBinding.instance!.addPostFrameCallback((_) {
+      _ambiguate(WidgetsBinding.instance)!.addPostFrameCallback((_) {
         if (mounted && _position?.outOfRange == true) {
           activity!.delegate.goBallistic(0);
         }
@@ -533,6 +541,14 @@ abstract class LoadIndicatorState<T extends LoadIndicator> extends State<T>
     _position?.isScrollingNotifier.removeListener(_listenScrollEnd);
     super.dispose();
   }
+
+  /// This allows a value of type T or T?
+  /// to be treated as a value of type T?.
+  ///
+  /// We use this so that APIs that have become
+  /// non-nullable can still be used with `!` and `?`
+  /// to support older versions of the API as well.
+  T? _ambiguate<T>(T? value) => value;
 
   @override
   Widget build(BuildContext context) {
